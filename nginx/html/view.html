@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <script>
+      function playFile() {
+        const fileName = document.getElementById("file-name").value;
+
+        fetch("https://our_storage_service/files?fileName=" + fileName)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error("Failed to retrieve file.");
+          }
+        })
+        .then(data => {
+          if (data.url) {
+            const videoPlayer = document.getElementById("video-player");
+            videoPlayer.src = data.url;
+            videoPlayer.style.display = "block";
+          } else {
+            throw new Error("Failed to retrieve file URL.");
+          }
+        })
+        .catch(error => {
+          console.error("An error occurred:", error);
+          alert("Failed to retrieve file. Please try again.");
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div>
+      <input type="text" id="file-name" placeholder="Enter file name or path">
+      <button onclick="playFile()">Play File</button>
+    </div>
+    <video id="video-player" style="display: none"></video>
+  </body>
+</html>
