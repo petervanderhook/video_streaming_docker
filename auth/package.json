@@ -4,9 +4,14 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1"
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node /app/public/app.js"
     },
     "keywords": [],
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+      "basic-auth": "^2.0.1",
+      "express": "^4.18.2"
+    }
   }
