@@ -13,6 +13,8 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
+    ports:
+      - 3000:3000
   upload:
     image: myuploadimage
     build:
@@ -21,6 +23,8 @@ services:
     environment:
       DB_HOST: db
       DB_PASSWORD: password
+    ports:
+      - 3500:3500
   file_system:
     build: ./file_system
     volumes:
@@ -34,6 +38,8 @@ services:
       DB_HOST: db
       DB_PASSWORD: password
       FILE_SYSTEM_HOST: file_system
+    ports:
+      - 4000:4000
   web:
     image: mynginx
     build:
