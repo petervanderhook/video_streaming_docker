@@ -31,6 +31,9 @@ app.use(function(req, res, next) {
 app.use(express.json());
 app.use(authenticate);
 
+app.get("/", (req, res) => {
+  res.sendFile("/app/public/index/html")
+});
 
 app.post("/", (req, res) => {
   res.send("Welcome to the protected page!");

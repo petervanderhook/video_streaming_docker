@@ -6,7 +6,7 @@ const app = express();
 // mysql to store video names and their paths
 // have to change to reflect user authentication
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: 'db-1',
     user: 'user',
     password: 'password',
     database: 'database'
@@ -36,6 +36,10 @@ app.get('/getVideo', (req, res) => {
         }
     })
 })
+
+app.get('/streaming', (req, res)=>{
+    res.sendFile('/app/public/streaming.html')
+});
 
 const port = process.env.PORT || 4000; // diff port for distinguishing reasons
 

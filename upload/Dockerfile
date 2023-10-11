@@ -2,17 +2,12 @@ FROM node:14-alpine
 
 WORKDIR /app
 
+COPY . .
 
-COPY package.json ./
-COPY package-lock.json ./
+CMD mv ./upload.html /app/public
 
 RUN npm install
 
-COPY . .
-
-COPY ./upload.html /app/public
-
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["npm", "start"]
-
