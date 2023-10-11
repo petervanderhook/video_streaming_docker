@@ -1,11 +1,6 @@
 const express = require("express");
 
 const app = express();
-const users = {
-  "tristan": "tristan",
-  "chris": "daryush",
-  "peter": "peter"
-};
 
 const authenticate = (req, res, next) => {
   req.body = req.body || {};
