@@ -15,5 +15,5 @@ RUN mkdir /mnt/data
 VOLUME /mnt/data
 
 # Start the Samba service
-CMD service smbd start
+CMD [ "smbd", "-F", "--debug-stdout", "--no-process-group" ]
 

@@ -1,14 +1,14 @@
 FROM node:14-alpine
 
-
 WORKDIR /app
 
-COPY ./package.json /app/package.json
+COPY . .
+
+RUN ls -la ./
 
 RUN npm install
 
-COPY ./login.html /app/public/login.html
-COPY ./app.js /app/public/app.js
+RUN mv ./login.html /app/public
 
 EXPOSE 3000
 
