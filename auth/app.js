@@ -7,6 +7,12 @@ const users = {
   "peter": "peter"
 };
 
+app.use(function(err, req, res, next) {
+  if(401 == err.status) {
+      res.redirect('/home')
+  }
+});
+
 const authenticate = (req, res, next) => {
   req.body = req.body || {};
   const username = req.body.username;

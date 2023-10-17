@@ -6,10 +6,10 @@ const app = express();
 // mysql to store video names and their paths
 // have to change to reflect user authentication
 const db = mysql.createConnection({
-    host: 'db-1',
-    user: 'user',
+    host: 'db',
+    user: 'express',
     password: 'password',
-    database: 'database'
+    database: 'video_streaming'
 })
 
 // auth something something here, sample code idk hehe!
@@ -20,6 +20,7 @@ db.connect((err) => {
     } 
     console.log('got into mysql');
 })
+
 
 // endpoint where the html file can be served videos dynamically
 // i.e. depends on the name given, queried into MySQL, retrieves video and path
@@ -37,8 +38,8 @@ app.get('/getVideo', (req, res) => {
     })
 })
 
-app.get('/streaming', (req, res)=>{
-    res.sendFile('/app/public/streaming.html')
+app.get('/', (req, res)=>{
+    res.sendFile(__dirname +'/stream.html')
 });
 
 const port = process.env.PORT || 4000; // diff port for distinguishing reasons

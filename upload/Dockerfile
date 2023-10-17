@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-CMD mv ./upload.html /app/public
+CMD ["mv", "upload.html", "/app/public/upload.html"]
 
 RUN npm install
 
