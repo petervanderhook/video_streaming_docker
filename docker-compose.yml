@@ -6,7 +6,7 @@ services:
     environment:
       MYSQL_DATABASE: video_streaming
       MYSQL_ROOT_PASSWORD: password
-      MySQL_ROOT_HOST: "%"
+      MySQL_ROOT_HOST: "localhost"
       MySQL_USER: express
       MYSQL_PASSWORD: password
     volumes:
@@ -33,6 +33,11 @@ services:
     environment:
       DB_HOST: db
       DB_PASSWORD: password
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - data:/mnt/data
   file_system:
     build: ./file_system
     volumes:
@@ -46,6 +51,8 @@ services:
       DB_HOST: db
       DB_PASSWORD: password
       FILE_SYSTEM_HOST: file_system
+    volumes:
+      - data:/mnt/data
     depends_on:
       db:
         condition: service_healthy
@@ -61,6 +68,8 @@ services:
       - nginx-conf:/etc/nginx/sites-enabled
     depends_on:
       streaming:
+        condition: service_started
+      upload:
         condition: service_started
 volumes:
   mysql-data: {}

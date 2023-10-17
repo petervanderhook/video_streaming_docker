@@ -28,22 +28,5 @@
     <video controls id="video-player">
         <!--src is dynamic, depends on the video being queried-->
     </video>
-    <!-- script uses video name from the URL to fetch its path and load it -->
-    <script>
-        const urlParams = new URLSearchParams(window.location.search)
-        const videoName = urlParams.get('videoName');
-
-        if (videoName) {
-            fetch(`/getVideo?name=${videoName}`)
-                .then(response => response.json())
-                .then(data => {
-                    const videoPlayer = document.getElementById('video-player')
-                    videoPlayer.src = data.videoPath;
-                })
-                .catch(error => {
-                    console.error('it no worketh', error);
-                });
-        }
-    </script>
 </body>
 </html>

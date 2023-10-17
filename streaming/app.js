@@ -26,16 +26,18 @@ db.connect((err) => {
 // i.e. depends on the name given, queried into MySQL, retrieves video and path
 app.get('/getVideo', (req, res) => {
     const videoName = req.query.name
-    const query = 'SELECT path FROM videos WHERE name = ?';
+    console.log(videoName)
+    const query = 'SELECT video_path FROM video_library WHERE video_title = ?';
 
     db.query(query, [videoName], (error, results) => {
         if (error) {
             console.error('cant fetch info');
         } else {
-            const videoPath = results[0].path;
-            res.json({ videoPath })
+            console.log(results[0].video_path)
+            const videoPath = results[0].video_path;
         }
     })
+    const videoSize = fs.statSync(videoPath).size;
 })
 
 app.get('/', (req, res)=>{
@@ -47,3 +49,6 @@ const port = process.env.PORT || 4000; // diff port for distinguishing reasons
 app.listen(port, () => {
     console.log(`stream service running on port ${port}`);
 });
+
+//      const videoPlayer = document.getElementById('video-player')
+//      videoPlayer.src = data.videoPath;
