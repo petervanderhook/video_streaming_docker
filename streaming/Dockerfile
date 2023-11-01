@@ -10,7 +10,7 @@ COPY . .
 
 CMD mv ./stream.html /app/public
 
-EXPOSE 3000
+EXPOSE 4000
 
 CMD ["npm", "start"]
 

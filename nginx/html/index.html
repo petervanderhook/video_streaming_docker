@@ -30,9 +30,9 @@
   </head>
   <body>
     <div>
-      <input type="text" id="file-name" placeholder="Enter file name or path">
-      <button onclick="playFile()">Play File</button>
+      <form action="/streaming/getVideo" method="get" enctype="text/plain">
+      <input type="text" name="name">
+      <input type="submit" value="Get Video" />
     </div>
-    <video id="video-player" style="display: none"></video>
   </body>
 </html>
