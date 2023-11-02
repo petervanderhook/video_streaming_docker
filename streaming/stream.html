@@ -3,30 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            max-width: 400px;
-            max-height: 200px;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        #video-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-    </style>
     <title>Steven Streams</title>
 </head>
 <body>
-    <img src="https://media.tenor.com/_pw-gfCVzg8AAAAd/sniff.gif" alt="dog sniffing">
-    <h1>Steven says Enjoy the Video</h1>
-    <video controls id="video-player">
-        <!--src is dynamic, depends on the video being queried-->
-    </video>
+<form action="/auth/createUser" method="POST" enctype="application/x-www-form-urlencoded">
+    <input type="text" name="username" />
+    <input type="text" name="password" />
+    <input type="submit" value="Submit" />
+</form>
 </body>
 </html>

@@ -1,62 +1,118 @@
-const express = require("express");
-const mysql = require('mysql');
-const app = express();
-
+require("dotenv").config()
+const express = require('express')
+const app = express()
+app.use(express.json())
+const bcrypt = require ('bcrypt')
+const mysql = require('mysql')
+const users = []
+const jwt = require('jsonwebtoken');
 const con = mysql.createConnection({
-  host: 'db',
-  user: 'express',
-  password: 'password',
-  database: 'video_streaming'
+    host: 'db',
+    user: 'express',
+    password: 'password',
+    database: 'video_streaming'
 });
+app.use(express.urlencoded({ extended: true }));
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.SECRET, {expiresIn: "15m"}) 
+}
 
-app.use(function(err, req, res, next) {
-  if(401 == err.status) {
-      res.redirect('/home')
-  }
+function insertUser(username, password, callback) {
+    const insertQuery = `INSERT INTO users (user, pass) VALUES (?, ?)`;
+    con.query(insertQuery, [username, password], (error, results) => {
+      if (error) {
+        console.error('Error:', error);
+      } else {
+        console.log(`User ${username} inserted successfully.`);
+      }
+        callback();
+    });
+}
+
+con.connect();
+
+const a = bcrypt.hashSync('piper', 10);
+const b = bcrypt.hashSync('cross', 10);
+const c = bcrypt.hashSync('hambone', 10);
+
+insertUser('peter', a, () => {
+    insertUser('chris', b, () => {
+        insertUser('tristan', c, () => {
+            console.log('All users inserted successfully.');
+        });
+    });
 });
+app.post ("/createUser", async (req,res) => {
+    const user = req.body.name
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    users.push ({user: user, password: hashedPassword})
+    res.status(201).send(users)
+    console.log(users)
+    })
 
-const authenticate = (req, res, next) => {
-  req.body = req.body || {};
-  const username = req.body.username;
-  const password = req.body.password;
-
-  // Query the 'users' table in the 'video_streaming' database
-  con.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (error, results) => {
-    if (error) {
-      return res.status(500).send("Internal Server Error");
-    }
+app.post("/login", async (req, res) => {
+    try {
+        const user = req.body.user;
+        const pass = req.body.pass;
+        const selectQuery = `SELECT pass FROM users WHERE user = ?`;
     
-    // Check if a user with the provided username and password exists in the database
-    if (results.length === 0) {
-      return res.status(401).send("Unauthorized");
+        const results = await new Promise((resolve, reject) => {
+            con.query(selectQuery, [user], (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    
+        if (results.length === 0) {
+            console.error(`No user found on login attempt for ${user}`);
+            return res.status(404).send("User not found");
+        }
+    
+        if (await bcrypt.compare(pass, results[0].pass)) {
+            const accessToken = generateAccessToken({ user: user });
+            res.set('Authorization', `Bearer ${accessToken}`);
+            res.redirect(302, '/auth/home');
+        } else {
+            res.status(401).send("Password Incorrect!");
+        }
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).send(`Internal Server Error:\n${error}`);
     }
-    console.log("SUCCESSFUL LOG-IN!")
-    next();
-  });
-};
+});
+      
+app.get("/home", validateToken, (req, res) => {
+    res.sendFile(__dirname + '/index.html')
+})
+app.get("/posts", validateToken, (req, res)=>{
+    console.log("Token is valid")
+    console.log(req.user.user)
+    res.send(`${req.user.user} successfully accessed post`)
+})
 
-app.use(function(req, res, next) {
-    if (req.method === 'POST' || req.method === 'OPTIONS') {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-      res.sendStatus(200);
-    } else {
-      next();
+app.use(validateToken);
+function validateToken(req, res, next) {
+    console.log(req.headers)
+    const authHeader = req.headers['authorization'] || null;
+    if (!authHeader) {
+        return res.status(400).send("Token not present");
     }
-  });  
-
-app.use(express.json());
-app.use(authenticate);
-
-app.get("/", (req, res) => {
-  res.sendFile("/app/public/index/html")
-});
-
-app.post("/", (req, res) => {
-  res.send("Welcome to the protected page!");
-});
+    const token = authHeader.split(" ")[1];
+    //the request header contains the token "Bearer <token>", split the string and use the second value in the split array.
+    jwt.verify(token, process.env.SECRET, (err, user) => {
+    if (err) { 
+        res.status(403).send("Token invalid")   
+        }
+        else {
+        req.user = user
+        next() //proceed to the next action in the calling function
+        }
+    }) //end of jwt.verify()
+} 
 
 app.listen(3000, () => {
-  console.log("Auth service listening on port 3000");
+    console.log("Auth service listening on port 3000");
 });
