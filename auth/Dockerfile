@@ -8,7 +8,7 @@ RUN ls -la ./
 
 RUN npm install
 
-RUN mv ./login.html /app/public
+COPY ./login.html /app/public/login.html
 
 EXPOSE 3000
 

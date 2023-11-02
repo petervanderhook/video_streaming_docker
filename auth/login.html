@@ -6,19 +6,11 @@
   </head>
   <body>
     <h1>Login</h1>
-    <form>
-      <div>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username">
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
-      </div>
-      <div>
-        <button type="submit">Submit</button>
-      </div>
-    </form>
+    <form action="/auth/login" method="POST" enctype="application/x-www-form-urlencoded">
+      <input type="text" name="name" />
+      <input type="password" name="password" />
+      <input type="submit" value="Submit" />
+  </form>
   </body>
 </html>
 
