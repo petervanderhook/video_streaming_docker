@@ -4,6 +4,7 @@ services:
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
     environment:
+      SECRET: a09fjw091jfi310
       MYSQL_DATABASE: video_streaming
       MYSQL_ROOT_PASSWORD: password
       MySQL_ROOT_HOST: "localhost"
@@ -25,12 +26,15 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
+    environment:
+      SECRET: a09fjw091jfi310
   upload:
     image: myuploadimage
     build:
       context: ./upload
       dockerfile: Dockerfile
     environment:
+      SECRET: a09fjw091jfi310
       DB_HOST: db
       DB_PASSWORD: password
     depends_on:
@@ -42,12 +46,15 @@ services:
     build: ./file_system
     volumes:
       - data:/mnt/data
+    environment:
+      SECRET: a09fjw091jfi310
   streaming:
     image: mystreamingimage
     build:
       context: ./streaming
       dockerfile: Dockerfile
     environment:
+      SECRET: a09fjw091jfi310
       DB_HOST: db
       DB_PASSWORD: password
       FILE_SYSTEM_HOST: file_system
@@ -71,6 +78,8 @@ services:
         condition: service_started
       upload:
         condition: service_started
+    environment:
+      SECRET: a09fjw091jfi310
 volumes:
   mysql-data: {}
   nginx-conf: {}

@@ -1,11 +1,13 @@
 const express = require("express");
-
+const mysql = require('mysql');
 const app = express();
-const users = {
-  "tamim": "tamim",
-  "daryush": "daryush",
-  "peter": "peter"
-};
+
+const con = mysql.createConnection({
+  host: 'db',
+  user: 'express',
+  password: 'password',
+  database: 'video_streaming'
+});
 
 app.use(function(err, req, res, next) {
   if(401 == err.status) {
@@ -17,10 +19,20 @@ const authenticate = (req, res, next) => {
   req.body = req.body || {};
   const username = req.body.username;
   const password = req.body.password;
-  if (!username || !password || users[username] !== password) {
-    return res.status(401).send("Unauthorized");
-  }
-  next();
+
+  // Query the 'users' table in the 'video_streaming' database
+  con.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (error, results) => {
+    if (error) {
+      return res.status(500).send("Internal Server Error");
+    }
+    
+    // Check if a user with the provided username and password exists in the database
+    if (results.length === 0) {
+      return res.status(401).send("Unauthorized");
+    }
+    console.log("SUCCESSFUL LOG-IN!")
+    next();
+  });
 };
 
 app.use(function(req, res, next) {
