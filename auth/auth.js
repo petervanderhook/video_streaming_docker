@@ -16,6 +16,22 @@ const con = mysql.createConnection({
 app.use(express.json())
 app.use(cookieParser())
 
+
+const db = mysql.createConnection({
+    host: 'db',
+    user: 'express',
+    password: 'password',
+    database: 'video_streaming'
+})
+
+db.connect((err) => {
+    if (err) {
+        console.error ('cant connect to mysql', err);
+        return;
+    } 
+    console.log('got into mysql');
+})
+
 function generateAccessToken(user) {
     return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "15m"}) 
 }
@@ -25,15 +41,15 @@ app.post ("/createUser", async (req,res) => {
     console.log(req.body.name)
     var user = req.body.name
     var hashedPassword = await bcrypt.hash(req.body.password, 10)
-    const insertQuery = "INSERT INTO users (user, pass) VALUES (?, ?)"
+    const insertQuery = "INSERT INTO users (user, password) VALUES (?, ?)"
     con.query(insertQuery, [user, hashedPassword], function(err, result) {
         if (err) {
           console.error(err);
-          res.status(500).send(`Error uploading video to the database:\n${err}`);
+          res.status(500);
         }
     })
     
-    res.status(201).redirect('/auth/')
+    res.status(201).redirect('/auth')
     })
 
 app.get('/', (req, res)=>{
@@ -41,28 +57,36 @@ app.get('/', (req, res)=>{
 });
 
 app.post("/login", (req,res) => {
+    try{
     const user = req.body.name
     const pass = req.body.password
-    const query = "SELECT pass FROM users WHERE user = ?"
-    con.query(query, [user], async (error, results) => {
-        console.log(results, '\n', results[0])
+    const query = "SELECT ? FROM users WHERE user = ?"
+    con.query(query, [pass, user], async (error, results) => {
+        console.log(results)
         if (error) {
             console.error('cant fetch info');
         } 
         if (results.length == 0) {
-            res.status(404).send("User does not exist!")
+            throw ""
         } else {
             const hashedPassword = results[0].pass
 
-            if (await bcrypt.compare(pass, hashedPassword)) {
+            if ( bcrypt.compare(pass, hashedPassword)) {
                 var accessToken = generateAccessToken ({user: pass})
                 res.cookie('accessToken', accessToken, { maxAge: 900*1000 })
-                res.redirect('/upload')
+                res.sendFile(__dirname +'/index.html')
             } else {
-                res.status(401).send("Password Incorrect!")
+                res.status(401)
+                throw ""
             }
         }
     })
+    }
+    catch (e){
+        res.status(401)
+        console.log(e)
+        res.send('Unauthorized')
+    }
 })
 
 app.get("/posts", validateToken, (req, res)=>{

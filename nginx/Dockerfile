@@ -14,4 +14,4 @@ COPY ./site.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 
 # # Start the Nginx service
-# CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g", "daemon off;"]
