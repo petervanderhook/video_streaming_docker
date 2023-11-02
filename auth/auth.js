@@ -6,7 +6,13 @@ app.use(bodyParser.urlencoded())
 const bcrypt = require ('bcrypt')
 const jwt = require("jsonwebtoken")
 const cookieParser = require('cookie-parser')
-const users = []
+const mysql = require('mysql');
+const con = mysql.createConnection({
+    host: 'db',
+    user: 'express',
+    password: 'password',
+    database: 'video_streaming'
+});
 app.use(express.json())
 app.use(cookieParser())
 
@@ -19,30 +25,44 @@ app.post ("/createUser", async (req,res) => {
     console.log(req.body.name)
     var user = req.body.name
     var hashedPassword = await bcrypt.hash(req.body.password, 10)
-    users.push ({user: user, password: hashedPassword})
+    const insertQuery = "INSERT INTO users (user, pass) VALUES (?, ?)"
+    con.query(insertQuery, [user, hashedPassword], function(err, result) {
+        if (err) {
+          console.error(err);
+          res.status(500).send(`Error uploading video to the database:\n${err}`);
+        }
+    })
+    
     res.status(201).redirect('/auth/')
-    console.log(users)
     })
 
 app.get('/', (req, res)=>{
     res.sendFile(__dirname +'/public/login.html')
 });
 
-app.post("/login", async (req,res) => {
-    console.log(users)
-    const user = users.find( (c) => c.user == req.body.name)
-    console.log(user)
-    //check to see if the user exists in the list of registered users
-    if (user == null) res.status(404).send ("User does not exist!")
-    //if user does not exist, send a 400 response
-    if (await bcrypt.compare(req.body.password, user.password)) {
-    var accessToken = generateAccessToken ({user: req.body.password})
-    res.cookie('accessToken', accessToken, { maxAge: 900*1000 })
-    res.redirect('/upload')
-    } 
-    else {
-    res.status(401).send("Password Incorrect!")
-    }
+app.post("/login", (req,res) => {
+    const user = req.body.name
+    const pass = req.body.password
+    const query = "SELECT pass FROM users WHERE user = ?"
+    con.query(query, [user], async (error, results) => {
+        console.log(results, '\n', results[0])
+        if (error) {
+            console.error('cant fetch info');
+        } 
+        if (results.length == 0) {
+            res.status(404).send("User does not exist!")
+        } else {
+            const hashedPassword = results[0].pass
+
+            if (await bcrypt.compare(pass, hashedPassword)) {
+                var accessToken = generateAccessToken ({user: pass})
+                res.cookie('accessToken', accessToken, { maxAge: 900*1000 })
+                res.redirect('/upload')
+            } else {
+                res.status(401).send("Password Incorrect!")
+            }
+        }
+    })
 })
 
 app.get("/posts", validateToken, (req, res)=>{

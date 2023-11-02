@@ -7,4 +7,4 @@ docker-compose down
 docker image prune -af
 
 :: Start containers using Docker Compose
-docker-compose up -d
+docker-compose up
