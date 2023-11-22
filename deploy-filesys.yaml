@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.31.2 (a92241f79)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: file-system
+  name: file-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: file-system
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.31.2 (a92241f79)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/video-streaming-docker-default: "true"
+        io.kompose.service: file-system
+    spec:
+      containers:
+        - env:
+            - name: SECRET
+              value: a09fjw091jfi310
+          image: ogpeter/file-system:latest
+          imagePullPolicy: IfNotPresent
+          name: file-system
+          resources: {}
+          volumeMounts:
+            - mountPath: /home/ubuntu
+              name: data
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
+status: {}

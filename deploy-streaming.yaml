@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.31.2 (a92241f79)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: streaming
+  name: streaming
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      io.kompose.service: streaming
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.31.2 (a92241f79)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/video-streaming-docker-default: "true"
+        io.kompose.service: streaming
+    spec:
+      containers:
+        - env:
+            - name: ACCESS_TOKEN_SECRET
+              value: 3e9af42de397cfc9387a06972c28c23a1ac7e9a60fb6dc1f05295bc6057baf500672d4a13db5d04ea84bbc4c5679164a7723f3d49f516bb73dc3df6e3b768c8e
+            - name: DB_HOST
+              value: db
+            - name: DB_PASSWORD
+              value: password
+            - name: FILE_SYSTEM_HOST
+              value: file_system
+            - name: SECRET
+              value: a09fjw091jfi310
+          image: cearis/streamingimage:latest
+          imagePullPolicy: IfNotPresent
+          name: streaming
+          resources: {}
+      restartPolicy: Always
+status: {}
