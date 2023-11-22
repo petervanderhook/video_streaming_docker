@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: file-systen 
+  labels:
+    app: file-system 
+spec:
+  ports:
+    - name: file-system
+      port: 4100
+  clusterIP: None
+  selector:
+    app: file-system

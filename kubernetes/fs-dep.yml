@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-system
+spec:
+  selector:
+    matchLabels:
+      app: file-system
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: file-system
+    spec:
+      containers:
+        - env:
+            - name: SECRET
+              value: a09fjw091jfi310
+          image: cearis/myfile-system:latest
+          imagePullPolicy: IfNotPresent
+          name: file-system
+          resources: {}
+          volumeMounts:
+            - mountPath: /mnt/data
+              name: data
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: fs-data
