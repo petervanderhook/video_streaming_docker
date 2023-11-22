@@ -22,7 +22,7 @@ services:
       timeout: 10s
       retries: 30
   auth:
-    image: myauthimage
+    image: cearis/authimage
     build:
       context: ./auth
       dockerfile: Dockerfile
@@ -32,7 +32,7 @@ services:
       upload:
         condition: service_started
   upload:
-    image: myuploadimage
+    image: cearis/uploadimage
     build:
       context: ./upload
       dockerfile: Dockerfile
@@ -53,7 +53,7 @@ services:
     environment:
       SECRET: a09fjw091jfi310
   streaming:
-    image: mystreamingimage
+    image: cearis/streamingimage
     build:
       context: ./streaming
       dockerfile: Dockerfile
@@ -69,7 +69,7 @@ services:
       db:
         condition: service_healthy
   web:
-    image: mynginx
+    image: cearis/mynginx
     build:
       context: ./nginx
       dockerfile: Dockerfile

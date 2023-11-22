@@ -29,19 +29,6 @@ function insertUser(username, password, callback) {
     });
 }
 
-con.connect();
-
-const a = bcrypt.hashSync('piper', 10);
-const b = bcrypt.hashSync('cross', 10);
-const c = bcrypt.hashSync('hambone', 10);
-
-insertUser('peter', a, () => {
-    insertUser('chris', b, () => {
-        insertUser('tristan', c, () => {
-            console.log('All users inserted successfully.');
-        });
-    });
-});
 app.post ("/createUser", async (req,res) => {
     const user = req.body.name
     const hashedPassword = await bcrypt.hash(req.body.password, 10)
@@ -114,5 +101,5 @@ function validateToken(req, res, next) {
 } 
 
 app.listen(3000, () => {
-    console.log("Auth service listening on port 3000");
+    console.log("Auth service listening on port 3000 using app.js");
 });

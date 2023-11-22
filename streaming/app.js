@@ -4,6 +4,7 @@ const fs = require('fs');
 const app = express();
 const cookieParser = require('cookie-parser')
 const jwt = require("jsonwebtoken")
+const http = require('http');
 app.use(cookieParser())
 
 // mysql to store video names and their paths
@@ -77,28 +78,13 @@ app.get('/', (req, res)=>{
     res.sendFile(__dirname +'/stream.html')
 });
 
+
 app.get('/videoplayer', (req, res) => {
-    console.log(req.query)
-    var range = req.headers.range 
-    if(!range) {range = 'bytes=0-'}
-    const videoPath = req.query.videopath; 
-    const videoSize = fs.statSync(videoPath).size 
-    const chunkSize = 1 * 1e6; 
-    const start = Number(range.replace(/\D/g, "")) 
-    const end = Math.min(start + chunkSize, videoSize - 1) 
-    const contentLength = end - start + 1; 
-    const headers = { 
-        "Content-Range": `bytes ${start}-${end}/${videoSize}`, 
-        "Accept-Ranges": "bytes", 
-        "Content-Length": contentLength, 
-        "Content-Type": "video/mp4"
-    } 
-    res.writeHead(206, headers) 
-    const stream = fs.createReadStream(videoPath, { 
-        start, 
-        end 
-    }) 
-    stream.pipe(res) 
+    const mp4Url = '/fs/read?videopath='+req.query.videoPath
+
+    http.get(mp4Url, (stream) => {
+        stream.pipe(res);
+    });
 }) 
 
 const port = process.env.PORT || 4000; // diff port for distinguishing reasons

@@ -1,7 +1,6 @@
 const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
-const multer = require('multer');
 const cookieParser = require('cookie-parser')
 const jwt = require("jsonwebtoken")
 
@@ -9,7 +8,6 @@ const app = express();
 app.use(express.json())
 app.use(cookieParser())
 
-const upload = multer({ dest: '/mnt/data' })
 
 const port = process.env.PORT || 8080;
 
@@ -57,14 +55,9 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '/upload.html'));
 });
 
-app.post('/upload',upload.single('video_file'),(req,res)=>{
-  console.log(JSON.stringify(req.headers));
-  console.log(req.file, req.body.name)
-  const file = req.file
-  let filename = file.originalname
-  let filepath = file.path
-  // console.log(file);
-  // console.log(file.originalname);
+app.get('/upload',(req,res)=>{
+  let filename = req.query.name
+  let filepath = req.query.path
   const insertQuery = `INSERT INTO video_library (video_title, video_path) VALUES (?, ?)`;
 
   con.query(insertQuery, [filename, filepath], function(err, result) {
@@ -77,6 +70,7 @@ app.post('/upload',upload.single('video_file'),(req,res)=>{
     }
   });
 });
+
 
 app.listen(port);
 console.log('Server started at http://localhost:' + port);
