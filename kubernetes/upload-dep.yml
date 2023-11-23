@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upload
+spec:
+  selector:
+    matchLabels:
+      app: upload
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: upload
+    spec:
+      containers:
+        - env:
+            - name: ACCESS_TOKEN_SECRET
+              value: 3e9af42de397cfc9387a06972c28c23a1ac7e9a60fb6dc1f05295bc6057baf500672d4a13db5d04ea84bbc4c5679164a7723f3d49f516bb73dc3df6e3b768c8e
+            - name: DB_HOST
+              value: db
+            - name: DB_PASSWORD
+              value: password
+            - name: SECRET
+              value: a09fjw091jfi310
+          image: cearis/uploadimage:latest
+          name: upload
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources: {}
+      restartPolicy: Always
+status: {}

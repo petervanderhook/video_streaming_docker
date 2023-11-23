@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload
+  labels:
+    app: upload
+spec:
+  ports:
+    - name: upload
+      port: 8080
+  clusterIP: None
+  selector:
+    app: upload

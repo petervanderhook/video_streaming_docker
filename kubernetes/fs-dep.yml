@@ -20,6 +20,9 @@ spec:
           image: cearis/myfile-system:latest
           imagePullPolicy: IfNotPresent
           name: file-system
+          ports:
+            - containerPort: 4100
+              protocol: TCP
           resources: {}
           volumeMounts:
             - mountPath: /mnt/data

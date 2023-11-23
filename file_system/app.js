@@ -11,7 +11,7 @@ const upload = multer({ dest: '/mnt/data' })
 
 const port = process.env.PORT || 4100; // diff port for distinguishing reasons
 
-app.post('/write',upload.single('video_file'),(req,res)=>{
+app.post('/fs/write',upload.single('video_file'),(req,res)=>{
     console.log(JSON.stringify(req.headers));
     console.log(req.file, req.body.name)
     const file = req.file
@@ -20,7 +20,7 @@ app.post('/write',upload.single('video_file'),(req,res)=>{
     res.redirect('/upload/upload?name='+filename+'&path='+filepath);
 });
 
-app.get('/read', (req, res) => {
+app.get('/fs/read', (req, res) => {
     console.log(req.query)
     var range = req.headers.range 
     if(!range) {range = 'bytes=0-'}

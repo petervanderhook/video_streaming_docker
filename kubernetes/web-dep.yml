@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: web
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - env:
+            - name: ACCESS_TOKEN_SECRET
+              value: a09fjw091jfi310
+          image: cearis/mynginx:latest
+          name: web
+          ports:
+            - containerPort: 80
+              hostPort: 80
+              protocol: TCP
+          resources: {}
+      restartPolicy: Always
+        
