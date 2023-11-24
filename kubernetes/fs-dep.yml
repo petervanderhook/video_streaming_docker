@@ -18,7 +18,6 @@ spec:
             - name: SECRET
               value: a09fjw091jfi310
           image: cearis/myfile-system:latest
-          imagePullPolicy: IfNotPresent
           name: file-system
           ports:
             - containerPort: 4100

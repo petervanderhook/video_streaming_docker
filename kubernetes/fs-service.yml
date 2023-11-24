@@ -8,6 +8,7 @@ spec:
   ports:
     - name: file-system
       port: 4100
+      targetPort: 4100
   clusterIP: None
   selector:
     app: file-system

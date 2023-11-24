@@ -26,7 +26,6 @@ spec:
             - name: SECRET
               value: a09fjw091jfi310
           image: cearis/streamingimage:latest
-          imagePullPolicy: IfNotPresent
           name: streaming
           ports:
             - containerPort: 4000

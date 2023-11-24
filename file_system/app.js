@@ -11,7 +11,7 @@ const upload = multer({ dest: '/mnt/data' })
 
 const port = process.env.PORT || 4100; // diff port for distinguishing reasons
 
-app.post('/fs/write',upload.single('video_file'),(req,res)=>{
+app.post('/write',upload.single('video_file'),(req,res)=>{
     console.log(JSON.stringify(req.headers));
     console.log(req.file, req.body.name)
     const file = req.file
@@ -20,7 +20,7 @@ app.post('/fs/write',upload.single('video_file'),(req,res)=>{
     res.redirect('/upload/upload?name='+filename+'&path='+filepath);
 });
 
-app.get('/fs/read', (req, res) => {
+app.get('/read', (req, res) => {
     console.log(req.query)
     var range = req.headers.range 
     if(!range) {range = 'bytes=0-'}
@@ -29,14 +29,15 @@ app.get('/fs/read', (req, res) => {
     const chunkSize = 1 * 1e6; 
     const start = Number(range.replace(/\D/g, "")) 
     const end = Math.min(start + chunkSize, videoSize - 1) 
-    const contentLength = end - start + 1; 
+    const contentLength = end - start + 1;
     const headers = { 
-        "Content-Range": `bytes ${start}-${end}/${videoSize}`, 
-        "Accept-Ranges": "bytes", 
-        "Content-Length": contentLength, 
+        "Content-Range": `bytes ${start}-${end}/${videoSize}`,
+        "Accept-Ranges": "bytes",
+        "Content-Length": contentLength,
         "Content-Type": "video/mp4"
     } 
-    res.writeHead(206, headers) 
+    /*res.writeHead(206, headers)*/
+    res.set(headers)
     const stream = fs.createReadStream(videoPath, { 
         start, 
         end 

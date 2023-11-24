@@ -67,9 +67,10 @@ app.get('/getVideo', (req, res) => {
         } else {
             console.log(results[0].video_path)
             var videoPath = results[0].video_path;
-            const videoSize = fs.statSync(videoPath).size;
-            console.log(videoPath, videoSize)
-            res.redirect('/streaming/videoplayer?videopath='+videoPath)
+            const mp4Url = 'http://file-system:4100/read?videopath='+results[0].video_path
+            http.get(mp4Url, (stream) => {
+                stream.pipe(res);
+            });
         }
     })
 })
@@ -81,7 +82,6 @@ app.get('/', (req, res)=>{
 
 app.get('/videoplayer', (req, res) => {
     const mp4Url = '/fs/read?videopath='+req.query.videoPath
-
     http.get(mp4Url, (stream) => {
         stream.pipe(res);
     });
